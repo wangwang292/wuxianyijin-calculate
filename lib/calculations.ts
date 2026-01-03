@@ -93,18 +93,21 @@ export async function calculateAndStore(): Promise<CalculationResult> {
         cityStandard = defaultCity;
       }
 
+      // 此时 cityStandard 必定有值（因为 cities 数组不为空）
+      const standard = cityStandard!;
+
       // 确定缴费基数
       let contributionBase: number;
-      if (avgSalary < cityStandard.base_min) {
-        contributionBase = cityStandard.base_min;
-      } else if (avgSalary > cityStandard.base_max) {
-        contributionBase = cityStandard.base_max;
+      if (avgSalary < standard.base_min) {
+        contributionBase = standard.base_min;
+      } else if (avgSalary > standard.base_max) {
+        contributionBase = standard.base_max;
       } else {
         contributionBase = avgSalary;
       }
 
       // 计算公司应缴纳金额
-      const companyFee = contributionBase * cityStandard.rate;
+      const companyFee = contributionBase * standard.rate;
 
       resultsToInsert.push({
         employee_name: employeeName,
@@ -112,7 +115,7 @@ export async function calculateAndStore(): Promise<CalculationResult> {
         avg_salary: parseFloat(avgSalary.toFixed(2)),
         contribution_base: parseFloat(contributionBase.toFixed(2)),
         company_fee: parseFloat(companyFee.toFixed(2)),
-        rate: cityStandard.rate
+        rate: standard.rate
       });
     }
 
